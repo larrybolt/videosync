@@ -1,0 +1,10 @@
+extends layout
+
+block content
+  h2 Please specify your name
+  form(action='', method='post')
+    if typeof error == 'string'
+      p.error=error
+    p 
+      input(type='text', name='name', placeholder='Your name')
+      input(type='submit', value=' Use this name! ')

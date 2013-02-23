@@ -1,0 +1,10 @@
+extends layout
+
+block content
+  section#main
+    div.flowplayer.functional(data-swf='flowplayer.swf', data-ratio='0.417')
+      video
+        source(type='video/mp4', src=url)
+
+    ul#users
+

@@ -1,0 +1,84 @@
+doctype 5
+html
+  head
+    title Watch Video's together in Sync
+    link(rel='stylesheet', href='/stylesheets/style.css')
+  
+  body
+    header
+      h1 Watch Video's together in Sync
+      unless me == false
+        p hi #{me.name}, session: #{me.session}
+    section#main
+      block content
+    footer
+      p By 
+        a(href='http://larrybolt.me') Larry Boltovsoi
+    script(src='/socket.io/socket.io.js')
+    script(src='/javascripts/vendor/jquery-1.8.3.min.js')
+    script(src='/javascripts/plugins.js')
+    script(src='/javascripts/flowplayer.min.js')
+    script
+      if (location.pathname.substr(0, 6) == '/watch')
+      {
+        var streamid = location.pathname.substr(7)
+          , master = false
+          , timer = false
+          , socket = io.connect('http://'+location.host);
+
+        socket.on('connect', function ()
+        {
+          socket.emit('set streamid', streamid);
+        });
+
+        socket.on('master '+streamid, function (isMaster)
+        {
+          master = isMaster;
+
+          if (isMaster)
+            timer = setInterval(function(){
+              if (flowplayer().ready)
+                socket.emit('player '+streamid, { state: flowplayer().playing, seek: flowplayer().video.time });
+            }, 1000);
+          else
+            clearInterval(timer);
+        });
+
+        socket.on('player '+streamid, function (data)
+        {
+          if (!flowplayer().ready || master) 
+            return;
+
+          if (data.state && !flowplayer().playing) 
+            flowplayer().play();
+          else if (!data.state && flowplayer().playing)
+            flowplayer().pause();
+
+          if (flowplayer().playing)
+          {
+              if (Math.abs(parseInt(data.seek - flowplayer().video.time)) < 1) 
+              {
+                  flowplayer().speed(1);
+              }
+              else if (Math.abs(parseInt(data.seek - flowplayer().video.time)) < 4) 
+              {
+                  if (data.seek > flowplayer().video.time && flowplayer().currentSpeed<1.2) 
+                      flowplayer().speed(flowplayer().currentSpeed+.05);
+                  if (data.seek < flowplayer().video.time && flowplayer().currentSpeed>.8) 
+                      flowplayer().speed(flowplayer().currentSpeed-.05);
+              }
+              else if (Math.abs(parseInt(data.seek - flowplayer().video.time)) < 8)
+              {
+                  if (data.seek > flowplayer().video.time && flowplayer().currentSpeed<1.4) 
+                      flowplayer().speed(flowplayer().currentSpeed+.1);
+                  if (data.seek < flowplayer().video.time && flowplayer().currentSpeed>.6) 
+                      flowplayer().speed(flowplayer().currentSpeed-.1);
+              }
+              else 
+              {
+                  flowplayer().seek(data.seek);
+              }
+          }
+        });
+      }
+
