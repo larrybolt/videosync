@@ -14,5 +14,8 @@ results
 npm-debug.log
 node_modules
 
+# css get's generated from less files
+public/stylesheets/style.css
+
 # ignore the test file
 public/test.*

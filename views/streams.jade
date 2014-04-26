@@ -1,0 +1,7 @@
+extends layout
+
+block content
+  section#main
+    ul
+      each stream in streams
+        li= stream.url
