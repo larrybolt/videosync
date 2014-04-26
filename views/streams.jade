@@ -3,5 +3,6 @@ extends layout
 block content
   section#main
     ul
-      each stream in streams
-        li= stream.url
+      each stream, streamid in streams
+        li
+          a(href='/watch/'+streamid)= stream.url

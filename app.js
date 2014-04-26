@@ -1,4 +1,3 @@
-
 /**
  * Module dependencies.
  */
@@ -12,6 +11,9 @@ express = require('express')
 var app = express();
 var codein = require("node-codein");
 
+// it sucks that express doesn't share session-data with socketio
+// or at least not when I started building this
+// oh well.. this fixed it
 var cookie_secret = 'your secret here';
 
 app.configure(function(){
@@ -48,7 +50,11 @@ app.locals.me = false;
 
 // Session collection
 var streams = {};
-
+/*    {
+ *      'id': {url: 'http://url'},
+ *      'id': {url: 'http://url'}
+ *    }
+ */
 
 function check_session(req, res, next)
 {
@@ -104,6 +110,10 @@ app.get('/watch/:streamid', check_session, function (req, res, next){
 
 app.get('/auth', function(req, res){
   res.render('new_session');
+});
+
+app.get('/streams', function(req, res){
+  res.render('streams', { streams: streams });
 });
 
 app.post('/auth', function(req, res){
@@ -177,7 +187,7 @@ io.sockets.on('connection', function (socket){
       socket.emit('master '+streamid, true);
     else
       socket.emit('player '+streamid, { state: stream.state, seek: stream.seek });
-    
+
     socket.on('player '+streamid, function (data)
     {
       if (typeof stream.master !== 'undefined' && stream.master == me.session)

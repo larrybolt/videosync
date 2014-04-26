@@ -7,13 +7,14 @@ html
   body
     header
       h1 Watch Video's together in Sync
+      nav#navigation
+        a(href="/") Home
+        a(href="/streams") Streams
       unless me == false
         p hi #{me.name}, session: #{me.session}
     section#main
       block content
-    footer
-      p By 
-        a(href='http://larrybolt.me') Larry Boltovsoi
+
     script(src='/socket.io/socket.io.js')
     script(src='/javascripts/vendor/jquery-1.8.3.min.js')
     script(src='/javascripts/plugins.js')
