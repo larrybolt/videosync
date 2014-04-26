@@ -9,7 +9,6 @@ express = require('express')
   , http = require('http')
   , path = require('path');
 var app = express();
-var codein = require("node-codein");
 
 // it sucks that express doesn't share session-data with socketio
 // or at least not when I started building this
@@ -33,6 +32,7 @@ app.configure(function(){
 
 app.configure('development', function(){
   app.use(express.errorHandler());
+  var codein = require("node-codein");
 });
 
 // Users collection

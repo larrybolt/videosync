@@ -12,5 +12,7 @@
     "jade": "*",
     "less-middleware": "*",
     "socket.io": "*"
+    "connect": "*"
+    "cookie": "*"
   }
 }
